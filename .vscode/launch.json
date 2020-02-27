@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+  
+    {
+      "name": "(lldb) Launch",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/3/a.out",
+      "args": [],
+      "stdio": ["test1.txt", "out"],
+      "cwd": "${workspaceFolder}/3/",
+    }
+  ]
+}
