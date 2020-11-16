@@ -1,29 +1,34 @@
 #include <iostream>
-#include <fstream>
-#include <cmath>
+#include <string>
 
-int mass_to_fuel (int mass) {
-    return floor(mass / 3) - 2;
+int mass_to_fuel(int mass) {
+    int fuel = mass / 3 - 2;
+    if (fuel < 0) {
+        return 0;
+    }
+    return fuel;
 }
 
-int fuel_required (int mass) {
-    int fuel = mass_to_fuel(mass);
-    if (fuel > 0) {
-        return fuel + fuel_required(fuel);
+int total_fuel(int remainingMass) {
+    int total = 0;
+
+    while (remainingMass > 0) {
+        total += mass_to_fuel(remainingMass);
+        remainingMass = remainingMass / 3 - 2;
     }
-    return 0;
+
+    return total;
 }
 
 int main () {
-    std::string line;
-    std::ifstream file("./input.txt");
-    int sum = 0;
-    while (std::getline(file, line))
-    {
-        int mass = atoi(line.c_str());
-        sum += fuel_required(mass);
+    int total = 0;
+
+    for (std::string line; std::getline(std::cin, line);) {
+        int moduleMass = atoi(line.c_str());
+        total += total_fuel(moduleMass);
     }
-    file.close();
-    std::cout << sum << std::endl;
+
+    std::cout << total << std::endl;
+
     return 0;
-} 
+}

@@ -1,57 +1,58 @@
 #include <iostream>
-#include <fstream>
-#include <sstream>
+#include <string>
 #include <vector>
+#include <sstream>
+#include <iostream>
 
-const int ADD = 1;
-const int MUL = 2;
-const int EXIT = 99;
+int run(std::vector<int> memory, int noun, int verb) {
+    memory[1] = noun;
+    memory[2] = verb;
 
-std::vector<int> parse(std::ifstream& file) {
-    std::string line;
-    std::getline(file, line);
-    std::stringstream ss(line);
+    int op, r1, r2, r3;
 
-    int number;
-    std::vector<int> codes;
+    for (int pc = 0; pc < memory.size(); pc += 4) {
+        op = memory[pc];
+        r1 = memory[pc + 1];
+        r2 = memory[pc + 2];
+        r3 = memory[pc + 3];
 
-    for (int i; ss >> i;) {
-        codes.push_back(i);    
-        if (ss.peek() == ',') {
-            ss.ignore();
+        switch (op) {
+            case 1:
+                memory[r3] = memory[r1] + memory[r2];
+                break;
+            case 2:
+                memory[r3] = memory[r1] * memory[r2];
+                break;
+            case 99:
+                return memory[0];
         }
     }
-    return codes;
-}
 
-int run (std::vector<int> program, int noun, int verb) {
-    program[1] = noun;
-    program[2] = verb;
-
-    for (int pc = 0; program[pc] != EXIT; pc += 4) {
-        switch (program[pc]) {
-            case ADD: 
-                program[program[pc + 3]] = program[program[pc + 1]] + program[program[pc + 2]];
-                break;
-            case MUL: 
-                program[program[pc + 3]] = program[program[pc + 1]] * program[program[pc + 2]];
-                break;
-            default:
-                return -1;
-        }
-    }
-    return program[0];
+    return memory[0];
 }
 
 int main () {
-    std::ifstream file("./input.txt");
-    std::vector<int> program = parse(file);
+    std::vector<int> memory = std::vector<int>(0);
+    std::string line;
+    std::getline(std::cin, line);
+    std::stringstream ss(line);
 
-    int noun = 98, verb = 20;
-    
-    std::cout << run(program, noun, verb) << std::endl;
-    std::cout << (100 * noun + verb) << std::endl;
+    for (int i; ss >> i;) {
+        memory.push_back(i);
+        if (ss.peek() == ',')
+            ss.ignore();
+    }
 
-    file.close();
+    int answer = run(std::vector<int>(memory), 0, 0);
+    int noun = run(std::vector<int>(memory), 1, 0) - answer;
+    int verb = run(std::vector<int>(memory), 0, 1) - answer;
+
+    int TARGET = 19690720 - answer;
+    int nouns = TARGET / noun;
+    int verbs = TARGET % noun;
+
+    std::cout << answer << std::endl;
+    std::cout << 100 * nouns + verbs << std::endl;
+
     return 0;
-} 
+}
